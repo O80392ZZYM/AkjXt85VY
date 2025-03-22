@@ -1,0 +1,25 @@
+name: example-workflow
+triggers:
+- type: http
+  name: http-trigger
+  async: true
+tasks:
+- name: task-1 # task name
+  type: http # task type
+  url: http://example.com/api/task-1 # the cloud function URL
+  method: GET # HTTP method
+  headers: # HTTP headers
+  - name: Content-Type
+    value: application/json
+  body: {"message": "Hello Walle!"} # HTTP body
+  retry: 3 # max retry times if the task failed
+  timeout: 10s # max request timeout
+  depends: [] # dependency list
+- name: task-2 # Task 2, no dependency
+  url: http://example.com/api/task-2
+- name: task-3
+  url: http://example.com/api/task-3
+  depends: [task-1, task-2] # depends on both Task 1 and Task 2, should be run after them
+- name: task-4
+  url: http://example.com/api/task-4
+  depends: [task-1] # Only depends on Task 1 and should be immediately run after Task 1
